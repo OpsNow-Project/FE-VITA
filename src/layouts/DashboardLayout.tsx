@@ -16,8 +16,8 @@ export const DashboardLayout: React.FC<Props> = ({ children }) => {
       <main className="p-6">{children}</main>
 
       {/* 상담 버튼 & 팝업 */}
-      {chatOpen && <ChatPopup />}
-      <ChatButton onClick={() => setChatOpen((prev) => !prev)} />
+      {chatOpen && <ChatPopup onClose={() => setChatOpen(false)} />}
+      {!chatOpen && <ChatButton onClick={() => setChatOpen(true)} />}
     </div>
   );
 };
