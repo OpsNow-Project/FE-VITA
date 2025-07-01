@@ -15,4 +15,4 @@ export const ChatHeader: React.FC<Props> = ({ onClose }) => (
     <div className="flex-1" />
     <button className="text-gray-400 hover:text-gray-600 text-2xl font-bold focus:outline-none" aria-label="닫기" onClick={onClose}>×</button>
   </div>
-); 
+);
