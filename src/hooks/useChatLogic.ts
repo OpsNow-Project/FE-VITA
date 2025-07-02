@@ -159,5 +159,6 @@ export const useChatLogic = () => {
     addMessage,
     handleBotAction,
     initializeChat,
+    setMessages,
   };
 }; 

@@ -1,6 +1,8 @@
 import axios from "axios";
 import type { AxiosInstance, AxiosRequestConfig } from "axios";
 
+// ApiClient를 사용할 때는 환경변수 import.meta.env.VITE_API_BASE_URL을 넘겨주세요.
+
 export class ApiClient {
   private client: AxiosInstance;
 

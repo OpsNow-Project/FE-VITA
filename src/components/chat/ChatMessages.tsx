@@ -17,7 +17,6 @@ type Props = {
 export const ChatMessages: React.FC<Props> = ({
   messages,
   loading,
-  onBotAction,
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 

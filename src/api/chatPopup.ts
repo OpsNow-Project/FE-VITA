@@ -1,13 +1,24 @@
 import { ApiClient } from "./apiClients";
 import type { PodDTO } from "../types/chat";
 
-export const chatPopupApi = new ApiClient("http://localhost:8080");
+export const chatPopupApi = new ApiClient("");
 
 export const fetchClusterSummary = () =>
-  chatPopupApi.get<string>("/metrics/cluster-summary");
+  chatPopupApi.get<string>("/api/metrics/cluster-summary");
 
 export const fetchPodList = () =>
-  chatPopupApi.get<Array<{ podName: string; podId: string; nameSpace: string }>>("/pod/list");
+  chatPopupApi.get<Array<{ podName: string; podId: string; nameSpace: string }>>("/api/pod/list");
 
 export const fetchPodInfo = (podName: string, nameSpace: string) =>
-  chatPopupApi.get<PodDTO>(`/pod/info?podName=${encodeURIComponent(podName)}&nameSpace=${encodeURIComponent(nameSpace)}`);
+  chatPopupApi.get<PodDTO>(`/api/pod/info?podName=${encodeURIComponent(podName)}&nameSpace=${encodeURIComponent(nameSpace)}`);
+
+export const fetchLastAnalysis = async () => {
+    try {
+      return await chatPopupApi.get<any>("/api/log/analyze");
+    } catch (err: any) {
+      if (err.response && err.response.status === 404) {
+        return null;
+      }
+      throw err;
+    }
+  };
