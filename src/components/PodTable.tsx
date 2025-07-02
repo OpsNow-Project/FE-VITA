@@ -62,9 +62,9 @@ export const PodTable = () => {
       <table className="w-full text-white text-sm border-collapse">
         <thead className="text-gray-400 border-b border-gray-600">
           <tr>
-            <th className="text-left py-2">Pod Name</th> {/* 왼쪽 정렬 */}
-            <th className="text-left">Status</th> {/* 가운데 정렬 */}
-            <th className="text-left">Restarts</th> {/* 오른쪽 정렬 */}
+            <th className="text-left py-2">Pod Name</th>
+            <th className="text-left">Status</th>
+            <th className="text-left">Restarts</th>
             <th className="text-left">Age</th>
             <th className="text-left">CPU</th>
             <th className="text-left">Memory</th>
