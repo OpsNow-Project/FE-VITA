@@ -1,50 +1,37 @@
-import React, { useState } from "react";
-import type { Pod } from "../types";
+import React, { useEffect, useState } from "react";
 import { StatusBadge } from "./StatusBadge";
+import { fetchPodList, fetchPodInfo } from "../api/chatPopup";
+import type { PodDTO } from "../types/chat";
 
 export const PodTable = () => {
   // 테이블 행 공통 스타일
   const cellClass = "py-3.5 px-0";
-  // 임시 pod 데이터
-  const pods: Pod[] = [
-    {
-      name: "web-frontend-7d8b9c5f4-xyz12",
-      status: "Running",
-      restarts: 0,
-      age: "2d 4h",
-      cpu: "45m",
-      memory: "128Mi",
-    },
-    {
-      name: "api-backend-6c7d8e9f0-abc34",
-      status: "Pending",
-      restarts: 12,
-      age: "1d 8h",
-    },
-    {
-      name: "database-5a6b7c8d9-def56",
-      status: "CrashLoop",
-      restarts: 1,
-      age: "5d 12h",
-      cpu: "120m",
-      memory: "512Mi",
-    },
-    {
-      name: "worker-queue-4b5c6d7e8-ghi78",
-      status: "Running",
-      restarts: 0,
-      age: "5m",
-    },
-  ];
-
-  // Pod 검색 기능
+  const [pods, setPods] = useState<PodDTO[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // 1. pod 목록 받아오기
+    fetchPodList().then(async (list) => {
+      // 2. 각 pod의 상세 정보 받아오기 (병렬)
+      const details = await Promise.all(
+        list.map((pod: any) =>
+          fetchPodInfo(pod.podName, pod.nameSpace).catch(() => null)
+        )
+      );
+      // 3. null 제외하고 저장
+      setPods(details.filter(Boolean) as PodDTO[]);
+      setLoading(false);
+    });
+  }, []);
 
   const filteredPods = pods.filter(
     (pod) =>
-      pod.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      pod.podName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       pod.status.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  if (loading) return <div className="p-4 text-white">로딩 중...</div>;
 
   return (
     <div className="bg-gray-800 p-4 rounded-xl">
@@ -72,13 +59,13 @@ export const PodTable = () => {
         </thead>
         <tbody>
           {filteredPods.map((pod) => (
-            <tr key={pod.name} className="border-b border-gray-700">
-              <td className={cellClass}>{pod.name}</td>
+            <tr key={pod.podName} className="border-b border-gray-700">
+              <td className={cellClass}>{pod.podName}</td>
               <td className={cellClass}>
                 <StatusBadge status={pod.status} />
               </td>
-              <td className={cellClass}>{pod.restarts}</td>
-              <td className={cellClass}>{pod.age}</td>
+              <td className={cellClass}>{pod.restartCount}</td>
+              <td className={cellClass}>{pod.createdAt}</td>
               <td className={cellClass}>{pod.cpu ?? "-"}</td>
               <td className={cellClass}>{pod.memory ?? "-"}</td>
             </tr>

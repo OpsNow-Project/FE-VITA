@@ -22,3 +22,6 @@ export const fetchLastAnalysis = async () => {
       throw err;
     }
   };
+
+export const execCli = (command: string) =>
+  chatPopupApi.post("/api/cli/exec", { command });

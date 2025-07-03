@@ -4,6 +4,7 @@ import { ChatHeader } from "../components/chat/ChatHeader";
 import { ChatMessages } from "../components/chat/ChatMessages";
 import { ChatInput } from "../components/chat/ChatInput";
 import { useChatLogic } from "../hooks/useChatLogic";
+import { execCli } from "../api/chatPopup";
 
 function analysisToMainMessage(data: any): React.ReactNode {
   return (
@@ -89,9 +90,26 @@ export const ChatPopup: React.FC<{ analysis?: any; onClose?: () => void }> = ({ 
     }
   }, [analysis, hasAdded, addMessage]);
 
-  const handleSend = () => {
+  const handleSend = async () => {
+    console.log("[handleSend] 버튼 클릭, input:", input);
     if (!input.trim()) return;
     addMessage("user", input);
+    try {
+      const res: any = await execCli(input);
+      // 서버가 success 필드로 성공/실패를 명확히 구분
+      if (res && res.success === true) {
+        addMessage("bot", "실행이 완료되었습니다.");
+        if (typeof handleBotAction === 'function') {
+          handleBotAction("메인 메뉴");
+        }
+      } else if (res && res.success === false && res.error) {
+        addMessage("bot", `오류: ${res.error}`);
+      } else {
+        addMessage("bot", "알 수 없는 응답입니다.");
+      }
+    } catch (e: any) {
+      addMessage("bot", `요청 실패: ${e?.message ?? e}`);
+    }
     setInput("");
   };
 
