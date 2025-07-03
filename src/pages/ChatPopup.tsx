@@ -5,20 +5,49 @@ import { ChatMessages } from "../components/chat/ChatMessages";
 import { ChatInput } from "../components/chat/ChatInput";
 import { useChatLogic } from "../hooks/useChatLogic";
 import { execCli } from "../api/chatPopup";
+import axios from "axios";
 
 function analysisToMainMessage(data: any): React.ReactNode {
   return (
     <div>
-      {data.situation && <><b>상황</b><br />{data.situation}<br /><br /></>}
-      {data.analysis && <><b>분석</b><br />{data.analysis}<br /><br /></>}
-      {data.rootCause && <><b>원인</b><br />{data.rootCause}<br /><br /></>}
-      {Array.isArray(data.recommendations) && data.recommendations.length > 0 && (
+      {data.situation && (
+        <>
+          <b>상황</b>
+          <br />
+          {data.situation}
+          <br />
+          <br />
+        </>
+      )}
+      {data.analysis && (
+        <>
+          <b>분석</b>
+          <br />
+          {data.analysis}
+          <br />
+          <br />
+        </>
+      )}
+      {data.rootCause && (
+        <>
+          <b>원인</b>
+          <br />
+          {data.rootCause}
+          <br />
+          <br />
+        </>
+      )}
+      {Array.isArray(data.recommendations) &&
+        data.recommendations.length > 0 &&
         data.recommendations.map((rec: any, idx: number) => (
           <div key={idx}>
-            <b>권장 조치</b><br />{rec.description}<br /><br />
+            <b>권장 조치</b>
+            <br />
+            {rec.description}
+            <br />
+            <br />
           </div>
-        ))
-      )}
+        ))}
     </div>
   );
 }
@@ -33,7 +62,19 @@ function analysisToCommandMessages(data: any): React.ReactNode[] {
           if (!commandSet.has(cmd)) {
             commandSet.add(cmd);
             result.push(
-              <pre key={cmd} style={{ background: '#f3f4f6', borderRadius: 6, padding: 8, fontSize: 13, margin: '8px 0', whiteSpace: 'pre-wrap' }}>{cmd}</pre>
+              <pre
+                key={cmd}
+                style={{
+                  background: "#f3f4f6",
+                  borderRadius: 6,
+                  padding: 8,
+                  fontSize: 13,
+                  margin: "8px 0",
+                  whiteSpace: "pre-wrap",
+                }}
+              >
+                {cmd}
+              </pre>
             );
           }
         });
@@ -43,9 +84,13 @@ function analysisToCommandMessages(data: any): React.ReactNode[] {
   return result;
 }
 
-export const ChatPopup: React.FC<{ analysis?: any; onClose?: () => void }> = ({ analysis, onClose }) => {
+export const ChatPopup: React.FC<{ analysis?: any; onClose?: () => void }> = ({
+  analysis,
+  onClose,
+}) => {
   const [input, setInput] = useState("");
-  const { messages, addMessage, handleBotAction, initializeChat, setMessages } = useChatLogic() as any;
+  const { messages, addMessage, handleBotAction, initializeChat, setMessages } =
+    useChatLogic() as any;
   const [hasAdded, setHasAdded] = useState(false);
   const timeoutsRef = useRef<number[]>([]);
 
@@ -97,18 +142,49 @@ export const ChatPopup: React.FC<{ analysis?: any; onClose?: () => void }> = ({ 
     try {
       const res: any = await execCli(input);
       // 서버가 success 필드로 성공/실패를 명확히 구분
-      if (res && res.success === true) {
+      if (res.success) {
         addMessage("bot", "실행이 완료되었습니다.");
-        if (typeof handleBotAction === 'function') {
-          handleBotAction("메인 메뉴");
-        }
-      } else if (res && res.success === false && res.error) {
-        addMessage("bot", `오류: ${res.error}`);
+        handleBotAction?.("메인 메뉴");
       } else {
-        addMessage("bot", "알 수 없는 응답입니다.");
+        // success=false지만 status는 200
+        addMessage("bot", `오류: ${res.error}`);
       }
     } catch (e: any) {
-      addMessage("bot", `요청 실패: ${e?.message ?? e}`);
+      // axios 에러인지 확인
+      if (axios.isAxiosError(e) && e.response) {
+        const { status, data } = e.response;
+
+        switch (status) {
+          case 400:
+            // Bad Request
+            addMessage(
+              "bot",
+              `${
+                data.error || "요청 형식이 올바르지 않습니다."
+              } 다시 시도해주세요.`
+            );
+            break;
+          case 404:
+            // Not Found
+            addMessage(
+              "bot",
+              `요청한 리소스를 찾을 수 없습니다. 다시 시도해주세요.`
+            );
+            break;
+          case 500:
+            // Internal Server Error
+            addMessage("bot", `지원되지 않는 명령어 입니다.`);
+            break;
+          default:
+            addMessage(
+              "bot",
+              `HTTP ${status} 오류: ${data.error || e.message}`
+            );
+        }
+      } else {
+        // 네트워크 에러 등
+        addMessage("bot", `네트워크 오류: ${e.message || e}`);
+      }
     }
     setInput("");
   };
@@ -116,7 +192,11 @@ export const ChatPopup: React.FC<{ analysis?: any; onClose?: () => void }> = ({ 
   return (
     <ChatLayout>
       <ChatHeader onClose={onClose} />
-      <ChatMessages messages={messages} loading={false} onBotAction={handleBotAction} />
+      <ChatMessages
+        messages={messages}
+        loading={false}
+        onBotAction={handleBotAction}
+      />
       <ChatInput value={input} onChange={setInput} onSend={handleSend} />
     </ChatLayout>
   );

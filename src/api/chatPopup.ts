@@ -21,7 +21,7 @@ export const fetchPodInfo = (podName: string, nameSpace: string) =>
 
 export const fetchLastAnalysis = async () => {
   try {
-    return await chatPopupApi.post<any>("/api/log/analyze");
+    return await chatPopupApi.get<any>("/api/log/analyze");
   } catch (err: any) {
     if (err.response?.status === 404) return null;
     throw err;
