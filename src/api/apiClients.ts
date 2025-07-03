@@ -16,7 +16,11 @@ export class ApiClient {
     return response.data;
   }
 
-  async post<T>(path: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
+  async post<T>(
+    path: string,
+    data?: any,
+    config?: AxiosRequestConfig
+  ): Promise<T> {
     const response = await this.client.post<T>(path, data, config);
     return response.data;
   }
