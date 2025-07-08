@@ -2,22 +2,6 @@ import React from 'react';
 import { bytesToGB, formatBytes } from '../../utils/formatters';
 import { DataRow } from '../common/DataRow';
 
-interface ClusterSummaryData {
-  nodeReadyCount: number;
-  podRunningCount: number;
-  podPendingCount: number;
-  podFailedCount: number;
-  nodeCpuCapacity: number;
-  nodeCpuAllocatable: number;
-  nodeCpuUsage: Record<string, number>;
-  nodeMemoryCapacity: number;
-  nodeMemoryAllocatable: number;
-  nodeMemoryUsage: Record<string, number>;
-  networkTransmit: Record<string, number>;
-  networkReceive: Record<string, number>;
-  volumeUsagePercent: Record<string, number>;
-}
-
 interface ClusterSummaryProps {
   data: any;
 }

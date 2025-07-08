@@ -5,7 +5,7 @@ import svgr from "vite-plugin-svgr";
 export default defineConfig(({ mode }) => {
   // mode: 'development' | 'production'
   const env = loadEnv(mode, process.cwd(), "");
-  const apiBaseUrl = env.VITE_API_BASE_URL || "http://localhost:8080";
+  const apiBaseUrl = env.VITE_API_BASE_URL || "http://react.local:31007";
 
   return {
     plugins: [react(), svgr()],

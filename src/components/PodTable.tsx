@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { StatusBadge } from "./StatusBadge";
 import { fetchPodList, fetchPodInfo } from "../api/chatPopup";
 import type { PodDTO } from "../types/chat";
