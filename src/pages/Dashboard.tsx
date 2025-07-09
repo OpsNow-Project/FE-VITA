@@ -1,59 +1,22 @@
-// Dashboard.tsx
-import { useEffect, useState } from "react";
-import { GrafanaPanel } from "../components/GrafanaPanel";
+// src/pages/Dashboard.tsx
+import React, { useEffect, useState } from "react";
 import { DashboardLayout } from "../layouts/DashboardLayout";
 import { PodTable } from "../components/PodTable";
 
-function buildUrls(from: number, to: number) {
-  const base = import.meta.env.VITE_GRAFANA_BASE_URL;
-  const common = `?orgId=1&from=${from}&to=${to}`;
-  return [
-    { panelId: 4, title: "CPU" },
-    { panelId: 3, title: "Memory" },
-    { panelId: 2, title: "Disk" },
-    { panelId: 1, title: "Network" },
-  ].map(({ panelId, title }) => ({
-    title,
-    src: `${base}${common}&panelId=${panelId}`,
-  }));
-}
+// 차트 컴포넌트 import
+import { CpuChart } from "../components/chart/CpuChart";
+import { HeapChart } from "../components/chart/HeapChart";
+import { HttpRateChart } from "../components/chart/HttpRateChart";
+import { DiskUsageChart } from "../components/chart/DiskUsageChart";
 
-export const Dashboard = () => {
-  const [range, setRange] = useState<{
-    from: number;
-    to: number;
-  }>({
-    from: Date.now() - 2 * 60 * 60 * 1000,
-    to: Date.now(),
-  });
-
-  const [urls, setUrls] = useState(buildUrls(range.from, range.to));
-
-  // 1분마다 time-window를 재계산해서 urls 갱신
-  useEffect(() => {
-    const id = setInterval(() => {
-      const now = Date.now();
-      setRange({ from: now - 2 * 60 * 60 * 1000, to: now });
-    }, 60_000);
-    return () => clearInterval(id);
-  }, []);
-
-  useEffect(() => {
-    setUrls(buildUrls(range.from, range.to));
-  }, [range]);
-
+export const Dashboard: React.FC = () => {
   return (
     <DashboardLayout>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        {urls.map(({ src, title }) => (
-          <GrafanaPanel
-            key={src}
-            src={src}
-            title={title}
-            width="100%"
-            height="320px"
-          />
-        ))}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <CpuChart />
+        <HeapChart />
+        <HttpRateChart />
+        <DiskUsageChart />
       </div>
       <PodTable />
     </DashboardLayout>
