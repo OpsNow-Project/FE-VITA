@@ -1,5 +1,5 @@
 // src/pages/Dashboard.tsx
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { DashboardLayout } from "../layouts/DashboardLayout";
 import { PodTable } from "../components/PodTable";
 

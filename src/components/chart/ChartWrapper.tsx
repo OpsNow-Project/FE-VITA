@@ -5,7 +5,7 @@ import { ResponsiveContainer } from "recharts";
 export interface ChartWrapperProps {
   title: string;
   height?: number;
-  children: React.ReactNode;
+  children: React.ReactElement;
 }
 
 const ChartWrapper: React.FC<ChartWrapperProps> = ({

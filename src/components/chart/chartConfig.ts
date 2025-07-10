@@ -28,7 +28,7 @@ export const legendProps = {
   verticalAlign: "bottom" as const,
   wrapperStyle: {
     display: "flex",
-    flexWrap: "wrap",
+    flexWrap: "wrap" as const,
     gap: "8px 16px",
     color: "#fff",
     fontSize: 12,
