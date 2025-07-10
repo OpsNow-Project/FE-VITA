@@ -1,4 +1,3 @@
-// src/components/charts/HttpRateChart.tsx
 import React, { useEffect, useState, useMemo } from "react";
 import {
   LineChart,
@@ -16,8 +15,13 @@ import ChartWrapper from "./ChartWrapper";
 import { axisProps, gridProps, tooltipProps, legendProps } from "./chartConfig";
 import { formatValue, HTTP_PALETTE } from "./theme";
 
+const URI_DESCRIPTION_MAP: Record<string, string> = {
+  "/**": "모든 HTTP 요청 (전체 경로)",
+};
+
 export const HttpRateChart: React.FC = () => {
   const [series, setSeries] = useState<MetricSeries[]>([]);
+
   useEffect(() => {
     metricsService.getHttpRate().then(setSeries);
   }, []);
@@ -28,12 +32,21 @@ export const HttpRateChart: React.FC = () => {
       const labels = parseSeriesName(s.seriesName);
       const name = labels.uri || "unknown";
       s.dataPoints.forEach((pt) => {
-        const time = new Date(pt.timestamp).toLocaleTimeString();
+        const time = new Date(pt.timestamp).toLocaleTimeString([], {
+          hour12: false,
+        });
         if (!map.has(time)) map.set(time, { time });
         map.get(time)[name] = pt.value;
       });
     });
     return Array.from(map.values());
+  }, [series]);
+
+  const filteredSeries = useMemo(() => {
+    return series.filter((s) => {
+      const uri = parseSeriesName(s.seriesName).uri || "";
+      return uri === "/**";
+    });
   }, [series]);
 
   return (
@@ -50,14 +63,15 @@ export const HttpRateChart: React.FC = () => {
           formatter={(v: number) => formatValue(v, " req/s")}
         />
         <Legend {...legendProps} />
-        {series.map((s) => {
-          const name = parseSeriesName(s.seriesName).uri || "unknown";
-          const color = HTTP_PALETTE[name] || "#888";
+        {filteredSeries.map((s) => {
+          const uri = parseSeriesName(s.seriesName).uri || "unknown";
+          const name = URI_DESCRIPTION_MAP[uri] || uri;
+          const color = HTTP_PALETTE[uri] || "#888";
           return (
             <Line
-              key={name}
+              key={uri}
               type="monotone"
-              dataKey={name}
+              dataKey={uri}
               name={name}
               dot={false}
               stroke={color}

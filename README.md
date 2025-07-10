@@ -24,6 +24,7 @@
 ```bash
 npm install -D vite-plugin-svgr
 npm install recharts
+npm install ag-grid-react@latest ag-grid-community@latest
 ```
 
 (설치해야 할 것 있으면 추가해주세요!)

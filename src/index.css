@@ -1,10 +1,50 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-body {
-  margin: 0;
+
+@font-face {
+  font-family: "Pretendard";
+  src: url("/fonts/Pretendard-Thin.otf") format("opentype");
+  font-weight: 100;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Pretendard";
+  src: url("/fonts/Pretendard-Light.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Pretendard";
+  src: url("/fonts/Pretendard-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Pretendard";
+  src: url("/fonts/Pretendard-Medium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Pretendard";
+  src: url("/fonts/Pretendard-SemiBold.otf") format("opentype");
+  font-weight: 600;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Pretendard";
+  src: url("/fonts/Pretendard-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
 }
 
+body {
+  margin: 0;
+  font-family: "Pretendard", sans-serif;
+}
+
+/* 애니메이션 */
 @keyframes fadeInUp {
   0% {
     opacity: 0;
@@ -15,7 +55,164 @@ body {
     transform: translateY(0);
   }
 }
-
 .animate-fade-in-up {
   animation: fadeInUp 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* AG Grid 다크 스타일 전체 */
+.ag-theme-alpine {
+  --ag-background-color: #232936;
+  --ag-header-background-color: #232936;
+  --ag-header-foreground-color: #f7f7fa;
+  --ag-row-hover-color: #29304a;
+  --ag-border-color: #6c7899;
+  --ag-font-size: 16px;
+  --ag-font-family: "Pretendard", sans-serif;
+  overflow: visible !important;
+}
+
+/* 헤더(제목줄): 세로선(열 경계) 없음, 바디와의 경계(아래쪽 가로선)만 */
+.ag-theme-alpine .ag-header-cell {
+  border-right: none !important;
+  border-bottom: none !important;
+}
+.ag-theme-alpine .ag-header {
+  background: #232936 !important;
+  border-bottom: 2px solid #6c7899 !important;
+}
+
+/* 헤더 폰트 스타일 */
+.ag-theme-alpine .ag-header-cell-label,
+.ag-theme-alpine .ag-header-cell-text,
+.ag-theme-alpine .ag-header-group-text {
+  color: #f7f7fa !important;
+  font-size: 17px;
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  display: flex;
+  align-items: center;
+}
+
+/* 바디(행): 가로 구분선(행 경계) 있음, 열 구분선 X */
+.ag-theme-alpine .ag-row {
+  display: flex;
+  align-items: stretch;
+  background: transparent;
+  border-bottom: 1.5px solid #6c7899 !important;
+}
+.ag-theme-alpine .ag-cell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100% !important;
+  font-size: 15px;
+  font-weight: 200;
+  letter-spacing: 0.03em;
+  font-family: "Pretendard", sans-serif;
+  color: #f1f1f5;
+  padding: 0 15px !important;
+  border-right: none !important;
+}
+
+/* 행 hover/선택 강조 */
+.ag-theme-alpine .ag-row:hover {
+  background: #374365 !important;
+}
+.ag-theme-alpine .ag-row-selected {
+  background: #4d63af !important;
+}
+
+/* 페이지네이션/드롭다운 */
+.ag-theme-alpine .ag-paging-panel,
+.ag-theme-alpine .ag-paging-number,
+.ag-theme-alpine .ag-paging-size {
+  color: #f1f1f5 !important;
+  font-size: 15px;
+}
+.ag-theme-alpine .ag-paging-panel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+}
+.ag-theme-alpine .ag-paging-size {
+  appearance: none;
+  background: #232936 !important;
+  color: #f1f1f5 !important;
+  border-radius: 6px;
+  border: 1px solid #6c7899 !important;
+  font-size: 15px;
+  padding: 4px 28px 4px 12px;
+  margin-left: 8px;
+  position: relative;
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 18px 18px;
+}
+.ag-theme-alpine .ag-paging-size option {
+  background: #232936;
+  color: #f1f1f5;
+}
+.ag-theme-alpine .ag-paging-number.ag-current {
+  background: #3945a5 !important;
+  color: #fff !important;
+  border-radius: 6px;
+}
+.ag-theme-alpine .ag-paging-number:hover {
+  background: #5066d8 !important;
+  color: #fff !important;
+}
+
+/* 스크롤바 */
+.ag-theme-alpine ::-webkit-scrollbar {
+  background: #232936;
+  height: 8px;
+  width: 8px;
+}
+.ag-theme-alpine ::-webkit-scrollbar-thumb {
+  background: #6c7899;
+  border-radius: 8px;
+}
+
+/* AG Grid 아이콘 밝은 색으로 오버라이드 */
+.ag-theme-alpine .ag-icon,
+.ag-theme-alpine .ag-icon svg,
+.ag-theme-alpine .ag-icon img {
+  color: #e3e8ef !important;
+  fill: #e3e8ef !important;
+  stroke: #e3e8ef !important;
+  opacity: 0.88 !important;
+}
+.ag-theme-alpine .ag-icon svg path {
+  stroke: #e3e8ef !important;
+  fill: #e3e8ef !important;
+  opacity: 0.92 !important;
+}
+.ag-theme-alpine .ag-icon:hover,
+.ag-theme-alpine .ag-icon svg:hover,
+.ag-theme-alpine .ag-icon svg path:hover {
+  color: #fff !important;
+  fill: #fff !important;
+  stroke: #fff !important;
+  opacity: 1 !important;
+}
+
+/* 반응형: 너무 좁은 곳에서는 폰트/패딩 줄이기 */
+@media (max-width: 600px) {
+  .ag-theme-alpine .ag-cell {
+    font-size: 14px;
+    padding: 0 10px !important;
+  }
+  .ag-theme-alpine .ag-row {
+    min-height: 44px !important;
+    height: 44px !important;
+  }
+}
+
+/* 테이블 전체 테두리 제거 */
+.ag-theme-alpine .ag-root,
+.ag-theme-alpine .ag-root-wrapper {
+  border: none !important;
+  box-shadow: none !important;
 }

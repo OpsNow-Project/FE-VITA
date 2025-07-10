@@ -28,5 +28,8 @@ export const fetchLastAnalysis = async () => {
   }
 };
 
+export const fetchPodFullList = () =>
+  chatPopupApi.get<PodDTO[]>("/api/pod/list-detail");
+
 export const execCli = (command: string) =>
   chatPopupApi.post("/api/cli/exec", { command });
