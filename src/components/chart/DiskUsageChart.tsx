@@ -11,8 +11,9 @@ import {
 import type { MetricSeries } from "../../types/metrics";
 import { metricsService } from "../../api/metricService";
 import ChartWrapper from "./ChartWrapper";
-import { axisProps, gridProps, tooltipProps, legendProps } from "./chartConfig";
+import { axisProps, gridProps, legendProps } from "./chartConfig";
 import { COLORS, formatValue } from "./theme";
+import { CustomTooltip } from "./CustomTooltip"; // 커스텀 툴팁 import
 
 export const DiskUsageChart: React.FC = () => {
   const [series, setSeries] = useState<MetricSeries[]>([]);
@@ -33,16 +34,16 @@ export const DiskUsageChart: React.FC = () => {
         <XAxis dataKey="time" {...axisProps} />
         <YAxis {...axisProps} unit="%" />
         <Tooltip
-          {...tooltipProps}
+          content={<CustomTooltip />}
           formatter={(v: number) => formatValue(v, "%")}
         />
         <Legend {...legendProps} />
         <Line
           type="monotone"
           dataKey="value"
-          name="Disk Usage"
+          name="Disk 사용률"
           dot={false}
-          stroke={COLORS.green}
+          stroke={COLORS.purple}
         />
       </LineChart>
     </ChartWrapper>

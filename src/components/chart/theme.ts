@@ -11,14 +11,7 @@ export const COLORS = {
 
 // HTTP 요청 경로별 고정 색상 매핑
 export const HTTP_PALETTE: Record<string, string> = {
-  "/": COLORS.green,
-  "/**": COLORS.orange,
-  "/actuator/prometheus": COLORS.blue,
-  "/api/load/cpu/start": COLORS.purple,
-  "/api/load/cpu/stop": COLORS.red,
-  "/api/load/disk/start": COLORS.teal,
-  "/api/load/disk/stop": COLORS.yellow,
-  "/api/load/stop-all": COLORS.pink,
+  "전체 HTTP 요청률": COLORS.green,
 };
 export function formatValue(value: number, unit: string) {
   return `${value.toFixed(2)}${unit}`;

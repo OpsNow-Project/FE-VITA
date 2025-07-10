@@ -14,8 +14,10 @@ export const PodTable = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [pageSize, setPageSize] = useState(15);
   const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
 
-  const gridRef = useRef<AgGridReact>(null);
+  // api를 상태로 저장
+  const [gridApi, setGridApi] = useState<any>(null);
 
   const filteredPods = useMemo(() => {
     if (!searchTerm) return pods;
@@ -28,19 +30,18 @@ export const PodTable = () => {
   }, [pods, searchTerm]);
 
   useEffect(() => {
-    if (gridRef.current) {
-      gridRef.current.api.paginationGetPageSize();
-      gridRef.current.api.paginationGoToPage(currentPage);
-    }
-  }, [pageSize, currentPage]);
-
-  const totalPages = gridRef.current?.api.paginationGetTotalPages() ?? 1;
-
-  useEffect(() => {
     fetchPodFullList()
       .then(setPods)
       .finally(() => setLoading(false));
   }, []);
+
+  // pageSize, currentPage, filteredPods 바뀔 때마다 페이지 이동과 totalPages 갱신
+  useEffect(() => {
+    if (gridApi) {
+      gridApi.paginationGoToPage(currentPage);
+      setTotalPages(gridApi.paginationGetTotalPages());
+    }
+  }, [pageSize, currentPage, filteredPods, gridApi]);
 
   if (loading) return <LoadingSpinner />;
 
@@ -75,7 +76,6 @@ export const PodTable = () => {
       </div>
       <div className="ag-theme-alpine" style={{ width: "100%" }}>
         <AgGridReact
-          ref={gridRef}
           rowData={filteredPods}
           columnDefs={podTableColumnDefs}
           pagination={true}
@@ -83,6 +83,7 @@ export const PodTable = () => {
           suppressPaginationPanel={true}
           domLayout="autoHeight"
           rowSelection="single"
+          onGridReady={(params) => setGridApi(params.api)} // api 저장
         />
       </div>
     </div>

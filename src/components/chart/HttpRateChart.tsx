@@ -10,14 +10,12 @@ import {
 } from "recharts";
 import type { MetricSeries } from "../../types/metrics";
 import { metricsService } from "../../api/metricService";
-import { parseSeriesName } from "./utils";
 import ChartWrapper from "./ChartWrapper";
 import { axisProps, gridProps, tooltipProps, legendProps } from "./chartConfig";
 import { formatValue, HTTP_PALETTE } from "./theme";
+import { CustomTooltip } from "./CustomTooltip";
 
-const URI_DESCRIPTION_MAP: Record<string, string> = {
-  "/**": "모든 HTTP 요청 (전체 경로)",
-};
+const DISPLAY_NAME = "전체 HTTP 요청률";
 
 export const HttpRateChart: React.FC = () => {
   const [series, setSeries] = useState<MetricSeries[]>([]);
@@ -28,9 +26,11 @@ export const HttpRateChart: React.FC = () => {
 
   const data = useMemo(() => {
     const map = new Map<string, any>();
+
     series.forEach((s) => {
-      const labels = parseSeriesName(s.seriesName);
-      const name = labels.uri || "unknown";
+      const rawName = s.seriesName.trim();
+      const name = rawName === "{}" || rawName === "" ? DISPLAY_NAME : rawName;
+
       s.dataPoints.forEach((pt) => {
         const time = new Date(pt.timestamp).toLocaleTimeString([], {
           hour12: false,
@@ -39,18 +39,12 @@ export const HttpRateChart: React.FC = () => {
         map.get(time)[name] = pt.value;
       });
     });
+
     return Array.from(map.values());
   }, [series]);
 
-  const filteredSeries = useMemo(() => {
-    return series.filter((s) => {
-      const uri = parseSeriesName(s.seriesName).uri || "";
-      return uri === "/**";
-    });
-  }, [series]);
-
   return (
-    <ChartWrapper title="HTTP 요청률 (1분 평균)" height={300}>
+    <ChartWrapper title="HTTP 요청률 (1분 평균)" height={300} mar>
       <LineChart
         data={data}
         margin={{ top: 15, right: 0, bottom: 24, left: 0 }}
@@ -59,22 +53,24 @@ export const HttpRateChart: React.FC = () => {
         <XAxis dataKey="time" {...axisProps} />
         <YAxis {...axisProps} unit=" req/s" />
         <Tooltip
-          {...tooltipProps}
+          content={<CustomTooltip />}
           formatter={(v: number) => formatValue(v, " req/s")}
         />
         <Legend {...legendProps} />
-        {filteredSeries.map((s) => {
-          const uri = parseSeriesName(s.seriesName).uri || "unknown";
-          const name = URI_DESCRIPTION_MAP[uri] || uri;
-          const color = HTTP_PALETTE[uri] || "#888";
+        {series.map((s) => {
+          const rawName = s.seriesName.trim();
+          const name =
+            rawName === "{}" || rawName === "" ? DISPLAY_NAME : rawName;
+          const color = HTTP_PALETTE[name] || "#888";
+
           return (
             <Line
-              key={uri}
+              key={name}
               type="monotone"
-              dataKey={uri}
+              dataKey={name}
               name={name}
               dot={false}
-              stroke={color}
+              stroke={color.blue}
             />
           );
         })}

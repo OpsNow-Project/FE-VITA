@@ -216,3 +216,7 @@ body {
   border: none !important;
   box-shadow: none !important;
 }
+
+.recharts-surface:focus {
+  outline: none !important;
+}
