@@ -4,20 +4,14 @@ export default {
   theme: {
     extend: {
       colors: {
-        running: {
-          DEFAULT: "#A3BE8C", // 배경: bg-running
-          text: "#000000", // 텍스트: text-running-text
-        },
-        pending: {
-          DEFAULT: "#EBCB8B",
-          text: "#000000",
-        },
-        crashloop: {
-          DEFAULT: "#BF616A",
-          text: "#ffffff",
-        },
-        chatblue: "#5E81AC",
-        hoverchat: "#3C567B",
+        running: { DEFAULT: "#92E6A7", text: "#222222" },
+        pending: { DEFAULT: "#FFD885", text: "#222222" },
+        crashloop: { DEFAULT: "#FFAC6B", text: "#222222" },
+        succeeded: { DEFAULT: "#B1B7FC", text: "#222222" },
+        failed: { DEFAULT: "#FF7E7E", text: "#222222" },
+      },
+      fontFamily: {
+        pretendard: ["Pretendard", "sans-serif"],
       },
     },
   },

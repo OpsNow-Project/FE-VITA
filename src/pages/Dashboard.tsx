@@ -1,7 +1,7 @@
 // src/pages/Dashboard.tsx
 import React from "react";
 import { DashboardLayout } from "../layouts/DashboardLayout";
-import { PodTable } from "../components/PodTable";
+import { PodTable } from "../components/podtable/PodTable";
 
 // 차트 컴포넌트 import
 import { CpuChart } from "../components/chart/CpuChart";

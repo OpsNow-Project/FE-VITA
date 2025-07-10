@@ -1,8 +1,93 @@
-# 🧑‍💻 [VITA] 프론트엔드 가이드
+# [VITA] 프론트엔드 가이드
 
 ---
 
-## 폴더 구조 목록 & 항목 설명
+##  프로젝트 소개
+
+**VITA**는 Kubernetes 클러스터 모니터링 및 관리 대시보드입니다. 실시간 메트릭 시각화와 AI 기반 챗봇 상담 기능을 제공하는 현대적인 웹 애플리케이션입니다.
+
+### 시스템 요구사항
+
+- **Node.js**: 18.0.0 이상
+- **npm**: 9.0.0 이상
+- **브라우저**: Chrome, Firefox, Safari, Edge 최신 버전
+
+---
+
+##  설치 방법
+
+### 1. 저장소 클론
+
+```bash
+git clone <repository-url>
+cd FE-VITA
+```
+
+### 2. 의존성 설치
+
+```bash
+# 기본 의존성 설치
+npm install
+
+# 추가 필수 패키지 설치
+npm install -D vite-plugin-svgr
+npm install recharts
+npm install ag-grid-react@latest ag-grid-community@latest
+```
+
+### 3. 환경 설정 (선택사항)
+
+프로젝트 루트에 `.env` 파일을 생성하여 환경 변수를 설정할 수 있습니다:
+
+```bash
+# .env
+VITE_API_BASE_URL=http://api.your.svr.com
+VITE_GRAFANA_BASE_URL=http://your.grafana.addr
+```
+
+
+**다른 환경 설정 예시**:
+```bash
+# 개발 환경
+VITE_API_BASE_URL=http://localhost:8080
+
+# 프로덕션 환경  
+VITE_API_BASE_URL=https://api.yourdomain.com
+```
+
+---
+
+##  실행 방법
+
+### 개발 서버 실행
+
+```bash
+# 개발 모드로 실행 (기본 포트: 5173)
+npm run dev
+
+### 빌드 및 배포
+
+```bash
+# 프로덕션 빌드
+npm run build
+
+# 빌드 결과 미리보기
+npm run preview
+
+# 린팅 검사
+npm run lint
+```
+
+### 실행 확인
+
+개발 서버가 정상적으로 실행되면 다음 URL에서 접근할 수 있습니다:
+
+- **로컬 접근**: http://localhost:5173
+- **네트워크 접근**: http://[your-ip]:5173
+
+---
+
+##  폴더 구조 목록 & 항목 설명
 
 ```
 ├───assets         # 정적이나 이미지 자료 포함
@@ -17,73 +102,4 @@
 
 ```
 
----
 
-## 설치 항목
-
-```bash
-npm install -D vite-plugin-svgr
-npm install recharts
-```
-
-(설치해야 할 것 있으면 추가해주세요!)
-
----
-
-## 🎨 Tailwind CSS 사용 가이드
-
-### 📁 설정 위치
-
-- Tailwind 설정 파일: `tailwind.config.js`
-
-### ✅ 원하는 색상 등록 예시
-
-```js
-// tailwind.config.js
-module.exports = {
-  theme: {
-    extend: {
-      colors: {
-        chatblue: "#5E81AC",
-        chatblueHover: "#3C567B",
-        danger: "#BF616A",
-      },
-    },
-  },
-};
-```
-
-사용 예시:
-
-```tsx
-<div className="bg-chatblue text-white">Chat</div>
-```
-
----
-
-## 🖼️ SVG 파일 불러오기
-
-### ⚙️ vite.config.ts 설정
-
-```ts
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import svgr from "vite-plugin-svgr";
-
-export default defineConfig({
-  plugins: [react(), svgr()],
-});
-```
-
-### ✅ SVG 불러오기 (React 컨텐츠로 불러오기)
-
-```tsx
-import ChatIcon from "../assets/img/chat.svg?react";
-
-<ChatIcon className="w-6 h-6 text-white" />;
-```
-
-- 바로 `?react` 키워보드를 별도로 추가해야 컨텐츠로 인식
-- 색상 변경 시 SVG 내부 `fill="currentColor"` 설정을 해야 Tailwind의 `text-white` 등으로 색상 적용 가능
-
----

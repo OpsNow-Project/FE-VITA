@@ -10,56 +10,54 @@ import {
 } from "recharts";
 import type { MetricSeries } from "../../types/metrics";
 import { metricsService } from "../../api/metricService";
-import { parseSeriesName } from "./utils";
 import ChartWrapper from "./ChartWrapper";
-import { axisProps, gridProps, tooltipProps, legendProps } from "./chartConfig";
-import { COLORS, formatValue } from "./theme";
-
-const palette = [COLORS.orange, COLORS.blue, COLORS.purple];
+import { axisProps, gridProps, legendProps } from "./chartConfig";
+import { COLORS } from "./theme";
+import { CustomTooltip } from "./CustomTooltip"; // 커스텀 툴팁 import
 
 export const HeapChart: React.FC = () => {
   const [series, setSeries] = useState<MetricSeries[]>([]);
+
   useEffect(() => {
     metricsService.getJvmHeap().then(setSeries);
   }, []);
 
-  const data = useMemo(() => {
-    const map = new Map<string, any>();
-    series.forEach((s, i) => {
-      const name = parseSeriesName(s.seriesName).id || `series${i}`;
-      s.dataPoints.forEach((pt) => {
-        const time = new Date(pt.timestamp).toLocaleTimeString();
-        if (!map.has(time)) map.set(time, { time });
-        map.get(time)[name] = pt.value;
-      });
+  const edenSeries = useMemo(() => {
+    return series.find((s) => {
+      const id = JSON.parse(s.seriesName).id || "";
+      return id === "Eden Space";
     });
-    return Array.from(map.values());
   }, [series]);
 
+  const data = useMemo(() => {
+    if (!edenSeries) return [];
+    const map = new Map<string, any>();
+    edenSeries.dataPoints.forEach((pt) => {
+      const time = new Date(pt.timestamp).toLocaleTimeString();
+      if (!map.has(time)) map.set(time, { time });
+      map.get(time)["eden"] = pt.value;
+    });
+    return Array.from(map.values());
+  }, [edenSeries]);
+
   return (
-    <ChartWrapper title="JVM 힙 사용량 (MiB)">
+    <ChartWrapper title="JVM Heap 사용량 (MiB)">
       <LineChart data={data}>
         <CartesianGrid {...gridProps} />
         <XAxis dataKey="time" {...axisProps} />
         <YAxis {...axisProps} unit="MiB" />
-        <Tooltip
-          {...tooltipProps}
-          formatter={(v: number) => formatValue(v, " MiB")}
-        />
+        {/* Tooltip을 커스텀 컴포넌트로 교체 */}
+        <Tooltip content={<CustomTooltip />} />
         <Legend {...legendProps} />
-        {series.map((s, i) => {
-          const name = parseSeriesName(s.seriesName).id || `series${i}`;
-          return (
-            <Line
-              key={name}
-              type="monotone"
-              dataKey={name}
-              name={name}
-              dot={false}
-              stroke={palette[i % palette.length]}
-            />
-          );
-        })}
+        {edenSeries && (
+          <Line
+            type="monotone"
+            dataKey="eden"
+            name="신규 객체 할당 영역"
+            dot={false}
+            stroke={COLORS.orange}
+          />
+        )}
       </LineChart>
     </ChartWrapper>
   );

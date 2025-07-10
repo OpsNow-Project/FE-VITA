@@ -1,4 +1,3 @@
-// src/components/charts/CpuChart.tsx
 import React, { useEffect, useState } from "react";
 import {
   LineChart,
@@ -12,8 +11,9 @@ import {
 import type { MetricSeries } from "../../types/metrics";
 import { metricsService } from "../../api/metricService";
 import ChartWrapper from "./ChartWrapper";
-import { axisProps, gridProps, tooltipProps, legendProps } from "./chartConfig";
-import { COLORS, formatValue } from "./theme";
+import { axisProps, gridProps, legendProps } from "./chartConfig";
+import { COLORS } from "./theme";
+import { CustomTooltip } from "./CustomTooltip";
 
 export const CpuChart: React.FC = () => {
   const [series, setSeries] = useState<MetricSeries[]>([]);
@@ -33,15 +33,12 @@ export const CpuChart: React.FC = () => {
         <CartesianGrid {...gridProps} />
         <XAxis dataKey="time" {...axisProps} />
         <YAxis {...axisProps} unit="%" />
-        <Tooltip
-          {...tooltipProps}
-          formatter={(val: number) => formatValue(val, "%")}
-        />
-        <Legend {...legendProps} /> {/* legendProps 사용 */}
+        <Tooltip content={<CustomTooltip />} />
+        <Legend {...legendProps} />
         <Line
           type="monotone"
           dataKey="value"
-          name="CPU Usage"
+          name="CPU 사용률"
           stroke={COLORS.green}
           dot={false}
         />
